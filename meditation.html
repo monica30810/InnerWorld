@@ -8,11 +8,11 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
+      min-height: 100%;
       background: radial-gradient(ellipse at center, #1d2b64 0%, #0f0c29 100%);
       font-family: 'Noto Serif TC', serif;
       color: white;
-      overflow: hidden;
+      overflow: auto;
     }
 
     canvas {
@@ -26,10 +26,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       text-align: center;
-      height: 100%;
-      padding: 5vh 5vw;
+      min-height: 100%;
+      padding: 5vh 5vw 8vh;
       box-sizing: border-box;
     }
 
@@ -52,7 +51,7 @@
     }
 
     .instruction {
-      margin-top: 10vh;
+      margin-top: 5vh;
       font-size: 4.5vw;
       max-width: 90vw;
       line-height: 1.8;
@@ -66,7 +65,7 @@
     }
 
     .controls {
-      margin-top: 6vh;
+      margin-top: 5vh;
       display: flex;
       flex-direction: column;
       gap: 1rem;
@@ -76,6 +75,7 @@
     .audio-control, .line-control {
       display: flex;
       justify-content: center;
+      gap: 1rem;
     }
 
     button, select {
@@ -102,8 +102,43 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 20 20'%3E%3Cpolygon points='0,0 20,0 10,10'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 0.7em top 60%;
+      background-position: right 0.7em top 50%;
       background-size: 0.65em auto;
+    }
+
+    .progress-control {
+      width: 80%;
+      max-width: 400px;
+      margin-top: 2vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5em;
+    }
+
+    #progressBar {
+      width: 100%;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+      cursor: pointer;
+    }
+
+    #progressBar::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 0 4px rgba(255,255,255,0.6);
+    }
+
+    #timeDisplay {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
@@ -121,15 +156,21 @@
   <div class="controls">
     <div class="audio-control">
       <select id="audioSelector" onchange="switchAudio()">
-        <option value="boundary">情緒界線冥想 〰 </option>
-        <option value="sleep">睡前身體掃描 🌙 </option>
+        <option value="boundary">情緒界線冥想 〰</option>
+        <option value="sleep">睡前身體掃描 🌙</option>
+        <option value="reset">排空思緒 重開機 🌀</option>
       </select>
     </div>
+
     <div class="audio-control">
-      <button onclick="toggleAudio()"> Play / Pause </button>
+      <button onclick="rewindAudio()">⮐ -5s</button>
+      <button onclick="toggleAudio()">▶ / ❚❚</button>
+      <button onclick="forwardAudio()">+5s ⮑</button>
     </div>
-    <div class="line-control">
-      <button onclick="nextLine()">下一句</button>
+
+    <div class="progress-control">
+      <input type="range" id="progressBar" value="0" min="0" step="1">
+      <div id="timeDisplay">00:00 / 00:00</div>
     </div>
   </div>
 </div>
@@ -149,6 +190,8 @@
   let index = 0;
   const textElement = document.getElementById("instructionText");
   const audio = document.getElementById("meditationAudio");
+  const progressBar = document.getElementById("progressBar");
+  const timeDisplay = document.getElementById("timeDisplay");
 
   function nextLine() {
     index = (index + 1) % instructions.length;
@@ -163,18 +206,55 @@
     }
   }
 
+  function rewindAudio() {
+    audio.currentTime = Math.max(audio.currentTime - 5, 0);
+  }
+
+  function forwardAudio() {
+    audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
+  }
+
   function switchAudio() {
     const selector = document.getElementById("audioSelector");
     const value = selector.value;
+    const lineControl = document.querySelector('.line-control');
+
     if (value === "boundary") {
       audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-boundary.MP3";
     } else if (value === "sleep") {
       audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/BodyScan.MP3";
+    } else if (value === "reset") {
+      audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/mind_reset.MP3";
     }
+
+    if (lineControl) lineControl.style.display = "none";
     audio.play();
   }
 
-  // 星空動畫
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
+  function updateTimeDisplay() {
+    const current = formatTime(audio.currentTime || 0);
+    const total = formatTime(audio.duration || 0);
+    timeDisplay.textContent = `${current} / ${total}`;
+  }
+
+  audio.addEventListener("timeupdate", () => {
+    progressBar.max = Math.floor(audio.duration);
+    progressBar.value = Math.floor(audio.currentTime);
+    updateTimeDisplay();
+  });
+
+  progressBar.addEventListener("input", () => {
+    audio.currentTime = progressBar.value;
+    updateTimeDisplay();
+  });
+
+  // 星空背景
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
   let stars = [];
@@ -216,8 +296,6 @@
 
   createStars(150);
   drawStars();
-  document.querySelector('.line-control').style.display = 'none';
-
 </script>
 
 </body>
