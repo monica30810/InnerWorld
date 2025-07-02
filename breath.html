@@ -149,6 +149,8 @@
         gap: 10px;
       }
     }
+
+
   </style>
 </head>
 <body>
@@ -164,6 +166,10 @@
         <option value="bhastrika">打通能量通道(快速吸吐)</option>
       </select>
       <button id="playBtn">▷</button>
+<button id="toggleSoundBtn">靜音呼吸</button>
+
+</button>
+
     </div>
     <div class="row">
       <label>吸</label><input id="inhaleTime" value="4" />
@@ -174,6 +180,7 @@
       <label>停</label><input id="hold2Time" value="0" />
     </div>
   </div>
+
 
   <script>
     let phase = 0;
@@ -191,10 +198,10 @@
     let exhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/exhale.mp3');
     let sighAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Sign.wav');
     let bhastrikaAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Inhale-Exhale-Sharp.wav');
-    bhastrikaAudio.volume = 0.5;
-    inhaleAudio.volume = 0.2;
-    exhaleAudio.volume = 0.2;
-    sighAudio.volume = 0.5;
+    bhastrikaAudio.volume = 0.1;
+    inhaleAudio.volume = 0.1;
+    exhaleAudio.volume = 0.1;
+    sighAudio.volume = 0.2;
 
     const auroraColors = [
       ['#7FDBFF', '#0074D9'],
@@ -262,22 +269,32 @@
       text(phases[phase], width / 2, height / 2);
     }
 
+    let isBreathSoundMuted = false;
+
+document.getElementById('toggleSoundBtn').addEventListener('click', () => {
+  isBreathSoundMuted = !isBreathSoundMuted;
+  document.getElementById('toggleSoundBtn').innerText = isBreathSoundMuted ? '開啟呼吸' : '靜音呼吸';
+});
+
     function playSoundForPhase(phaseName) {
-      const preset = document.getElementById('presetSelector').value;
-      if (preset === 'bhastrika') {
-        bhastrikaAudio.currentTime = 0;
-        bhastrikaAudio.play();
-        return;
-      }
-      if (phaseName === 'Inhale') {
-        inhaleAudio.currentTime = 0;
-        inhaleAudio.play();
-      } else if (phaseName === 'Exhale') {
-        const audio = (preset === 'sigh') ? sighAudio : exhaleAudio;
-        audio.currentTime = 0;
-        audio.play();
-      }
-    }
+  if (isBreathSoundMuted) return;
+
+  const preset = document.getElementById('presetSelector').value;
+  if (preset === 'bhastrika') {
+    bhastrikaAudio.currentTime = 0;
+    bhastrikaAudio.play();
+    return;
+  }
+  if (phaseName === 'Inhale') {
+    inhaleAudio.currentTime = 0;
+    inhaleAudio.play();
+  } else if (phaseName === 'Exhale') {
+    const audio = (preset === 'sigh') ? sighAudio : exhaleAudio;
+    audio.currentTime = 0;
+    audio.play();
+  }
+}
+
 
     function updateDurationsFromInputs() {
       phaseDurations = [
