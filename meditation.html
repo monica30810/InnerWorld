@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+
+      margin: 0;
+      padding: 0;<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -27,7 +29,7 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      min-height: 100 dvh;
+      min-height: 100dvh;
       padding: 5vh 5vw 8vh;
       box-sizing: border-box;
     }
@@ -156,6 +158,7 @@
   <div class="controls">
     <div class="audio-control">
       <select id="audioSelector" onchange="switchAudio()">
+        <option value="affirmation">Morning Affirmation 🥰</option>
         <option value="boundary">情緒界線冥想 〰</option>
         <option value="sleep">睡前身體掃描 🌙</option>
         <option value="reset">排空思緒 重開機 🌀</option>
@@ -225,7 +228,10 @@
       audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/BodyScan.MP3";
     } else if (value === "reset") {
       audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/mind_reset.MP3";
-    }
+
+    } else if (value === "affirmation") {
+  audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/affirmation.MP3";
+ }
 
     if (lineControl) lineControl.style.display = "none";
     audio.play();
