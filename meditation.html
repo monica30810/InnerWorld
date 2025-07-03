@@ -162,6 +162,7 @@
         <option value="boundary">情緒界線冥想 〰</option>
         <option value="sleep">睡前身體掃描 🌙</option>
         <option value="reset">排空思緒 重開機 🌀</option>
+        
       </select>
     </div>
 
@@ -178,7 +179,7 @@
   </div>
 </div>
 
-<audio id="meditationAudio" src="https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-boundary.MP3"></audio>
+<audio id="meditationAudio" src="https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/affirmation.MP3"></audio>
 
 <script>
   const instructions = [
@@ -222,16 +223,16 @@
     const value = selector.value;
     const lineControl = document.querySelector('.line-control');
 
-    if (value === "boundary") {
-      audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-boundary.MP3";
+    if (value === "affirmation") {
+  audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/affirmation.MP3";
     } else if (value === "sleep") {
       audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/BodyScan.MP3";
     } else if (value === "reset") {
       audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/mind_reset.MP3";
 
-    } else if (value === "affirmation") {
-  audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/affirmation.MP3";
- }
+    } else if (value ==="boundary") {
+      audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-boundary.MP3";
+    } 
 
     if (lineControl) lineControl.style.display = "none";
     audio.play();
