@@ -161,6 +161,8 @@
         <option value="boundary">情緒界線冥想 〰</option>
         <option value="sleep">睡前身體掃描 🌙</option>
         <option value="reset">排空思緒 重開機 🌀</option>
+        <option value="wealth">療癒潛意識v.s.金錢 💰</option>
+
         
       </select>
     </div>
@@ -232,6 +234,10 @@
     } else if (value ==="boundary") {
       audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-boundary.MP3";
     } 
+    else if (value === "wealth") {
+  audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/Wealthy_meditation.MP3";
+}
+
 
     if (lineControl) lineControl.style.display = "none";
     audio.play();
